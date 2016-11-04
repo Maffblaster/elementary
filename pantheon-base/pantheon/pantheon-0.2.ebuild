@@ -7,7 +7,7 @@ EAPI=5
 inherit bzr
 
 DESCRIPTION="Elementary's desktop environment"
-HOMEPAGE="http://www.elementaryos.org/ https://launchpad.net/elementaryos/"
+HOMEPAGE="https://www.elementaryos.org/ https://launchpad.net/elementaryos/"
 EBZR_REPO_URI="lp:~elementary-os/elementaryos/pantheon-xsession-settings-luna"
 
 LICENSE="GPL-3"
@@ -18,10 +18,8 @@ IUSE="+lightdm +screensaver"
 CDEPEND="
 	lightdm? ( >=pantheon-base/pantheon-greeter-1.0 )"
 RDEPEND="${CDEPEND}
-	>=gnome-base/gnome-session-3.0
-	<gnome-base/gnome-session-3.10
-	>=gnome-base/gnome-settings-daemon-3.0
-	<gnome-base/gnome-settings-daemon-3.10
+	gnome-base/gnome-session:0[ubuntu]
+	gnome-base/gnome-settings-daemon:0[ubuntu]
 	>=pantheon-base/cerbere-0.2
 	pantheon-base/plank
 	>=pantheon-base/slingshot-0.7

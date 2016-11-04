@@ -4,53 +4,75 @@
 
 EAPI=6
 
-# Set URI name based on version. Perhaps develop an eclass.
+inherit bzr
 
 if [[ "${PV}" == "9999" ]]; then
-	inherit bzr
-	EBZR_REPO_URI="lp:${PN}"
-	KEYWORDS=""
+	EBZR_REPO_URI="lp:~elementary-os/elementaryos/pantheon-xsession-settings"
 else
-	SRC_URI="https://launchpad.net/${PN}/loki/${PV}/+download/${P}.tar.xz"
-	KEYWORDS="~amd64"
-fi
+	# Set based on ${PV}
+	case "${PV}" in
+		"0.2")
+			EBZR_REPO_URI="lp:~elementary-os/elementaryos/pantheon-xsession-settings-luna"
+		;;
+		"0.3")
+			EBZR_REPO_URI="lp:~elementary-os/elementaryos/pantheon-xsession-settings-luna"
+		;;
+		"0.4")
+			EBZR_REPO_URI="lp:~elementary-os/elementaryos/pantheon-xsession-settings"
+		;;
+	esac
+fi	
+
+KEYWORDS="~amd64"
 
 DESCRIPTION="Pantheon DE meta package"
-HOMEPAGE="http://www.elementaryos.org/ http://launchpad.net/elementaryos/"
-
-EBZR_REPO_URI="lp:~elementary-os/elementaryos/pantheon-xsession-settings"
-
+HOMEPAGE="https://www.elementaryos.org/ https://launchpad.net/elementaryos/"
 LICENSE="GPL-3"
 SLOT="0"
-IUSE="+lightdm +screensaver web"
+
+IUSE="+extras +lightdm +screensaver +themes"
 
 CDEPEND="
 	lightdm? ( >=pantheon-base/pantheon-greeter-1.0 )"
 RDEPEND="${CDEPEND}
-	>=gnome-base/gnome-session-3.0
-	>=gnome-base/gnome-settings-daemon-3.0
+	gnome-base/gnome-session:0[ubuntu]
+	gnome-base/gnome-settings-daemon:0[ubuntu]
 	>=pantheon-base/cerbere-0.2
 	pantheon-base/plank
 	>=pantheon-base/slingshot-0.7
 	>=pantheon-base/wingpanel-0.2
 	pantheon-base/pantheon-settings
-	>=x11-themes/elementary-theme-3.4
 	x11-wm/gala
-	screensaver? ( || ( x11-misc/light-locker gnome-extra/gnome-screensaver x11-misc/xscreensaver ) )
-	web? ( www-client/epiphany )"
+	x11-terms/pantheon-terminal
+	pantheon-base/switchboard-plug-pantheon-shell
+	extras? (
+		www-client/epiphany
+		pantheon-extra/pantheon-calculator
+		pantheon-extra/pantheon-mail
+		pantheon-extra/pantheon-print
+	)
+	screensaver? ( || ( 
+		x11-misc/light-locker
+		gnome-extra/gnome-screensaver
+		x11-misc/xscreensaver 
+		) )
+	themes? ( 
+		>=x11-themes/elementary-theme-3.4
+		x11-themes/plank-theme-pantheon:0 
+		)"
 DEPEND="${CDEPEND}"
 
 src_prepare() {
 	eapply_user
 
 	# Use gnome as fallback instead of ubuntu and mutter instead of gala
-	sed -i -e 's/ubuntu/gnome/' debian/pantheon.session
+	#sed -i -e 's/ubuntu/gnome/' debian/pantheon.session || die "Failed to run sed 1"
 
 	# Use gnome-session wrapper that sets XDG_CURRENT_DESKTOP
-	sed -i 's/gnome-session --session=pantheon/pantheon-session/' debian/pantheon.desktop
+	#sed -i 's/gnome-session --session=pantheon/pantheon-session/' debian/pantheon.desktop || die "Failed to run sed 2"
 
 	# Correct paths
-	sed -i 's#/usr/lib/[^/]*/#/usr/libexec/#' autostart/*
+	sed -i 's#/usr/lib/[^/]*/#/usr/libexec/#' autostart/* || die "Failed to run sed 3"
 }
 
 src_install() {
